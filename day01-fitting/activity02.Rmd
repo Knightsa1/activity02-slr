@@ -7,6 +7,8 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+##Day 1
+
 
 ```{r load_packages}
 
@@ -199,3 +201,67 @@ $$
 1. The intercept is 74.8. This means a song with dB = 0 would have a popularity of 74.8.
 
 2. The slope is 1.37. This means that for each 1 unit increase in dB the populatity will increase by 1.37 units. 
+
+##Day 2
+
+
+
+```{r splitting_the_data}
+
+set.seed(123)
+
+music_split <- initial_split(music, 0.8)
+
+music_train <- training(music_split)
+
+music_test <- testing(music_split)
+
+```
+
+
+```{r}
+
+lm_spec <- linear_reg() %>% 
+  set_mode("regression") %>% 
+  set_engine("lm")
+
+```
+
+```{r}
+
+slr_mod2 <- lm_spec %>% 
+  fit(data = music_train, pop ~ dB)
+
+tidy(slr_mod2)
+```
+
+```{r}
+
+glance(slr_mod2)
+
+```
+
+```{r pred-df}
+pred_df <- tibble::tibble(
+  dB = 0:10
+)
+```
+
+```{r predict}
+
+pred_df %>% 
+  mutate(
+    pred_value = predict(slr_mod2, new_data = pred_df) %>% pull(.pred)
+  )
+```
+
+```{r augment}
+slr_aug <- augment(slr_mod2, new_data = music_test)
+
+slr_aug
+```
+
+``` {r }
+slr_aug <- augment(slr_mod2, new_data = music_test)
+slr_aug
+```
